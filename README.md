@@ -44,6 +44,6 @@ This plugin can show a small, clearly labelled "partner roles" block to high-sco
 - To advertise a role, companies use the intake form linked in the skill.
 - To activate the block, set `enabled: true` in the skill's `assets/partners.json` and bump the plugin `version`. See `plugins/prompt-coach/skills/prompt-coach/references/partners-and-ads.md` for the full rules, including the privacy line (the block fetches your public `roles.json` and never sends user data).
 
-## License
+## License and privacy
 
-No license set yet. Add a `LICENSE` file (for example MIT) if you want others to reuse it freely.
+Licensed under the MIT License (see [LICENSE](LICENSE)). See the [Privacy Policy](PRIVACY.md) for how the skill handles your data. Short version: it all stays on your machine.
