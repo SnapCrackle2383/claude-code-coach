@@ -1,0 +1,19 @@
+{
+  "name": "claude-code-coach",
+  "owner": {
+    "name": "James Smith"
+  },
+  "plugins": [
+    {
+      "name": "prompt-coach",
+      "source": "./plugins/prompt-coach",
+      "description": "Analyzes your own Claude Code history and coaches you to prompt better: a score out of 100, named anti-patterns, before/after rewrites of your real prompts, custom commands to build, matched courses, and a private local scan for leaked secrets.",
+      "version": "1.0.0",
+      "author": {
+        "name": "James Smith"
+      },
+      "category": "productivity",
+      "tags": ["coaching", "prompting", "productivity", "self-improvement"]
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "enabled": false,
+  "min_score_band": "Advanced",
+  "opt_in_required": true,
+  "advertise_contact_url": "https://tally.so/r/Npgvv0",
+  "roles_url": "https://raw.githubusercontent.com/SnapCrackle2383/claude-code-coach/main/roles.json",
+  "roles": [],
+  "_note": "Ships disabled so the skill shows no ads by default (no surprise). To go live: set enabled=true, set advertise_contact_url to your Tally form, and either edit the roles array here OR set roles_url to a hosted JSON of the same shape (then you update listings without republishing the skill). If roles_url is set and reachable it wins; otherwise the bundled roles are used. Read references/partners-and-ads.md first."
+}
