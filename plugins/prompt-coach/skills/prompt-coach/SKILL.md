@@ -80,6 +80,12 @@ One or two sentences. Are they strong, mixed, or struggling, per the data? No he
 The named patterns from `anti_patterns` with meaningful counts, each with its count
 and the one-line fix. Skip any that are near zero.
 
+## Where you got frustrated (and what to type instead)
+2 to 4 real moments from `frustration_moments`, addressed directly: quote the
+prompt, name the upstream cause, then give the exact replacement prompt to use
+next time. Per the rubric: empathy is the hook, the replacement prompt is the
+payload. Skip this section only if the list is empty.
+
 ## Highest-leverage changes
 The 2 to 4 biggest levers, ranked. If they have no custom commands/subagents, that
 leverage layer is almost always lever #1.

@@ -136,6 +136,38 @@ SECRET_PATTERNS = [
 RETRY_SET = {"try", "try again", "try now", "retry", "again", "run it again",
              "go again", "once more", "and again", "now"}
 
+# Moments where the user is visibly frustrated or lost. These are gold for
+# coaching: each one marks a round-trip that a sharper upstream prompt (or a
+# different habit) would have prevented. Matched on prose only.
+FRUSTRATION_RE = re.compile(
+    r"(?i)\b(frustrat\w*|confus\w*|annoy\w*|i give up|giving up"
+    r"|still (?:not|doesn'?t|isn'?t|won'?t) work\w*|not working again"
+    r"|why (?:is|does) this (?:so|not|keep)|(?:we|you) keep (?:missing|breaking|doing)"
+    r"|this is (?:bad|not good|wrong|broken)|that'?s not (?:right|what i)"
+    r"|come on\b|argh|ffs|wtf|makes no sense|i don'?t (?:understand|get it|follow)"
+    r"|no idea what|lost (?:here|now)\b|going in circles|whack.?a.?mole)"
+)
+
+
+def find_frustration_moments(prose, limit=10):
+    """Surface real prompts where the user hit friction, for direct coaching."""
+    hits = []
+    for p in prose:
+        c = p["c"].strip()
+        m = FRUSTRATION_RE.search(c)
+        if not m:
+            continue
+        hits.append({
+            "when": p["t"][:10],
+            "trigger": m.group(0).lower(),
+            "prompt": (c[:280] + "…") if len(c) > 280 else c,
+        })
+    # Spread across the history rather than clustering on one bad day.
+    if len(hits) > limit:
+        step = len(hits) / limit
+        hits = [hits[int(i * step)] for i in range(limit)]
+    return hits
+
 
 def _mask(s):
     s = s.strip()
@@ -231,7 +263,17 @@ def compute_score(out):
     rework = fr.get("still", 0) + fr.get("again", 0) + fr.get("that's wrong", 0)
     rr = rework / prose_n * 100
     eff = 15 if rr < 8 else 10 if rr < 15 else 5
-    used = any(k not in ("/model", "/clear", "/compact", "/help", "/init") for k in slash)
+    # Leverage credit is for CUSTOM commands only. Built-ins prove nothing about
+    # whether the user has built a leverage layer, so exclude the common ones.
+    builtins = {
+        "/model", "/clear", "/compact", "/help", "/init", "/plugin", "/fast",
+        "/context", "/cost", "/status", "/config", "/permissions", "/agents",
+        "/hooks", "/doctor", "/login", "/logout", "/mcp", "/memory", "/exit",
+        "/quit", "/resume", "/rewind", "/review", "/vim", "/export", "/bug",
+        "/add-dir", "/terminal-setup", "/release-notes", "/pr-comments",
+        "/fewer-permission-prompts", "/statusline",
+    }
+    used = any(k not in builtins for k in slash)
     lev = 15 if used else (5 if (setup.get("user_commands_dir") or setup.get("user_agents_dir")) else 0)
 
     total = direction + spec + dec + eff + lev
@@ -370,6 +412,7 @@ def main():
         "prose_sample": sample,
     }
     out["anti_patterns"] = detect_anti_patterns(prompts, prose)
+    out["frustration_moments"] = find_frustration_moments(prose)
     out["secret_scan"] = scan_secrets(all_prompts)
     out["prompt_score"] = compute_score(out)
     print(json.dumps(out, indent=2, ensure_ascii=False))
