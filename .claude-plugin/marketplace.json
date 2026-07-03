@@ -7,8 +7,8 @@
     {
       "name": "prompt-coach",
       "source": "./plugins/prompt-coach",
-      "description": "Analyzes your own Claude Code history and coaches you to prompt better: a score out of 100, named anti-patterns, before/after rewrites of your real prompts, direct coaching on your frustration moments, custom commands to build, matched courses, and a private local scan for leaked secrets.",
-      "version": "1.1.0",
+      "description": "Analyzes your own Claude Code history and coaches you to prompt better: a score out of 100, named anti-patterns, before/after rewrites of your real prompts, direct coaching on your frustration moments, the subagents and plan-mode features you are missing, custom commands to build, matched courses, and a private local scan for leaked secrets.",
+      "version": "1.2.0",
       "author": {
         "name": "James Smith"
       },

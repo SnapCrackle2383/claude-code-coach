@@ -47,6 +47,17 @@ Rules for good rewrites:
 - Prefer real, plausible file paths and specifics drawn from their own context over invented ones. If you do not know the real path, say "<path>" rather than fabricating.
 - Never invent a failure that the data does not support.
 
+## Coach the machine, not just the words (`advanced_features`)
+
+`advanced_features` tells you whether the user has ever used the orchestration layer: `subagent_runs` (delegated work), `plan_mode_prompts` (plan-then-approve enforced by the tool), `background_task_notifications` (long work backgrounded instead of blocking). A zero or near-zero here is only worth coaching if their history shows a workload that needed it, so pair each count with evidence from THEIR data:
+
+- **subagent_runs near 0** + heavy verbose workflows in `workflow_vocabulary` (eval, test, build, logs): show them the exact workload they ran inline. "You ran some form of `eval` 38 times in your main chat. Every one dumped harness output into your context and crowded out the thinking. A subagent runs it in its own context and returns three lines of scores. Here is the one to create: <concrete subagent for THEIR workflow>."
+- **plan_mode_prompts near 0** + big multi-file asks or `revert/undo` friction: point at a real prompt where they kicked off structural work cold, and say what plan mode (Shift+Tab) would have caught before any code changed.
+- **background_task_notifications near 0** + evidence of long waits (pasted logs, "is it done?", "still running?" prompts): show a real waiting moment and explain backgrounding: kick it off, keep working, get pinged on completion.
+- If they DO use these, credit it specifically; that is rare and worth reinforcing.
+
+The rule, as everywhere: the example must come from their own history, named workload and real count, not a hypothetical. "Subagents exist" is a docs page; "your 38 eval runs belonged in one" is coaching.
+
 ## Address frustration head-on
 
 `frustration_moments` contains real prompts where the user was visibly stuck, confused, or annoyed. Do not bury these in aggregate stats. Pick the 2 to 4 most instructive moments and speak to them directly, in second person:

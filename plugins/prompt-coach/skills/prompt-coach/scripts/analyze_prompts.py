@@ -64,9 +64,17 @@ WORKFLOW_TERMS = {
 
 
 def collect_user_prompts(files):
-    """Return (prompts, slash_cmd_counter). Each prompt is {t, c, sidechain, cwd}."""
+    """Return (prompts, slash_cmds, features). Each prompt is {t, c, sidechain, cwd}.
+
+    features counts evidence of advanced-feature usage found in the transcripts:
+    - subagent_runs: sidechain user turns, i.e. work delegated to a subagent
+    - plan_mode_prompts: prompts typed while in plan mode (permissionMode == "plan")
+    - background_task_notifications: completions of backgrounded tasks
+    """
     prompts = []
     slash_cmds = Counter()
+    features = {"subagent_runs": 0, "plan_mode_prompts": 0,
+                "background_task_notifications": 0}
     for fp in files:
         try:
             with open(fp, "r", encoding="utf-8", errors="ignore") as fh:
@@ -90,6 +98,13 @@ def collect_user_prompts(files):
                     m = re.match(r"<command-name>\s*(/[^<\s]+)", stripped)
                     if m:
                         slash_cmds[m.group(1)] += 1
+                    # Advanced-feature evidence, counted before any filtering.
+                    if obj.get("isSidechain"):
+                        features["subagent_runs"] += 1
+                    if obj.get("permissionMode") == "plan":
+                        features["plan_mode_prompts"] += 1
+                    if stripped.startswith("<task-notification"):
+                        features["background_task_notifications"] += 1
                     if stripped.startswith(NON_PROMPT_PREFIXES):
                         continue
                     if not stripped:
@@ -102,7 +117,7 @@ def collect_user_prompts(files):
                     })
         except (OSError, IOError):
             continue
-    return prompts, slash_cmds
+    return prompts, slash_cmds, features
 
 
 def bucket(n):
@@ -319,7 +334,7 @@ def main():
                           "root": args.root, "project": args.project}))
         return
 
-    all_prompts, slash_cmds = collect_user_prompts(files)
+    all_prompts, slash_cmds, features = collect_user_prompts(files)
     prompts = [p for p in all_prompts if not p["sidechain"]]
 
     if not prompts:
@@ -412,6 +427,7 @@ def main():
         "prose_sample": sample,
     }
     out["anti_patterns"] = detect_anti_patterns(prompts, prose)
+    out["advanced_features"] = features
     out["frustration_moments"] = find_frustration_moments(prose)
     out["secret_scan"] = scan_secrets(all_prompts)
     out["prompt_score"] = compute_score(out)

@@ -86,6 +86,13 @@ prompt, name the upstream cause, then give the exact replacement prompt to use
 next time. Per the rubric: empathy is the hook, the replacement prompt is the
 payload. Skip this section only if the list is empty.
 
+## The machinery you're not using
+From `advanced_features`: for each near-zero capability (subagents, plan mode,
+background tasks) that their workload actually needed, show the real workload
+from their history that belonged there, with its count, and the concrete way to
+use the feature next time. Credit what they DO use. Skip capabilities where
+their workload genuinely would not benefit.
+
 ## Highest-leverage changes
 The 2 to 4 biggest levers, ranked. If they have no custom commands/subagents, that
 leverage layer is almost always lever #1.
